@@ -35,32 +35,20 @@ public class FFIBenchmark {
 
     @Benchmark
     public void JNI() {
-        callJNI();
+      org.bytedeco.javacpp.linux.getpid();
     }
 
     @Benchmark
     public void panamaDowncall() throws Throwable {
-        callPanamaDowncall();
+        linker.downcallHandle(
+                lookup.lookup("getpid").get(),
+                MethodType.methodType(int.class),
+                FunctionDescriptor.of(CLinker.C_INT))
+              .invokeExact();
     }
 
     @Benchmark
     public void panamaJExtract() {
-        callPanamaJExtract();
-    }
-
-    public int callJNI() {
-        return org.bytedeco.javacpp.linux.getpid();
-    }
-
-    public long callPanamaDowncall() throws Throwable {
-        var getpid = linker.downcallHandle(
-                lookup.lookup("getpid").get(),
-                MethodType.methodType(int.class),
-                FunctionDescriptor.of(CLinker.C_INT));
-        return ((int) getpid.invokeExact());
-    }
-
-    public long callPanamaJExtract() {
-        return org.unix.unistd_h.getpid();
+       org.unix.unistd_h.getpid();
     }
 }
