@@ -38,3 +38,10 @@ mvn clean verify
 java -jar target/benchmarks.jar
 ```
 
+## Typical Results
+```text
+Benchmark                    Mode  Cnt  Score   Error  Units
+FFIBenchmark.JNI             avgt   20  9.103 ± 0.148  ns/op
+FFIBenchmark.panamaDowncall  avgt   20  8.265 ± 0.114  ns/op
+FFIBenchmark.panamaJExtract  avgt   20  8.528 ± 0.112  ns/op
+```

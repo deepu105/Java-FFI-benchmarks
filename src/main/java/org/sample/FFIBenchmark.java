@@ -1,14 +1,13 @@
 package org.sample;
 
-import jdk.incubator.foreign.CLinker;
-import jdk.incubator.foreign.FunctionDescriptor;
-import jdk.incubator.foreign.SymbolLookup;
+import jdk.incubator.foreign.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.TimeUnit;
 
@@ -21,8 +20,14 @@ import java.util.concurrent.TimeUnit;
 public class FFIBenchmark {
 
     // get System linker
-    private final CLinker linker = CLinker.getInstance();
-    private final SymbolLookup lookup = CLinker.systemLookup();
+    private static final CLinker linker = CLinker.getInstance();
+    private static final SymbolLookup lookup = CLinker.systemLookup();
+
+    // predefine symbols and method handle info
+    private static final MethodHandle getPidMH = linker.downcallHandle(
+            lookup.lookup("getpid").get(),
+            MethodType.methodType(int.class),
+            FunctionDescriptor.of(CLinker.C_INT));;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -33,18 +38,19 @@ public class FFIBenchmark {
         new Runner(opt).run();
     }
 
+//    @Benchmark
+//    public void JNI() {
+//        org.bytedeco.javacpp.macosx.getpid();
+//    }
+
     @Benchmark
     public void JNI() {
-      org.bytedeco.javacpp.linux.getpid();
+        org.bytedeco.javacpp.linux.getpid();
     }
 
     @Benchmark
     public void panamaDowncall() throws Throwable {
-        linker.downcallHandle(
-                lookup.lookup("getpid").get(),
-                MethodType.methodType(int.class),
-                FunctionDescriptor.of(CLinker.C_INT))
-              .invokeExact();
+        int pid = (int) getPidMH.invokeExact();
     }
 
     @Benchmark
