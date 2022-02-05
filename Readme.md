@@ -39,9 +39,21 @@ java -jar target/benchmarks.jar
 ```
 
 ## Typical Results
-```text
+
+20 count
+
+```console
 Benchmark                    Mode  Cnt  Score   Error  Units
 FFIBenchmark.JNI             avgt   20  9.103 ± 0.148  ns/op
 FFIBenchmark.panamaDowncall  avgt   20  8.265 ± 0.114  ns/op
 FFIBenchmark.panamaJExtract  avgt   20  8.528 ± 0.112  ns/op
+```
+
+40 count
+
+```console
+Benchmark                    Mode  Cnt  Score   Error  Units
+FFIBenchmark.JNI             avgt   40  49.182 ± 1.079  ns/op
+FFIBenchmark.panamaDowncall  avgt   40  50.746 ± 0.702  ns/op
+FFIBenchmark.panamaJExtract  avgt   40  48.838 ± 1.461  ns/op
 ```
