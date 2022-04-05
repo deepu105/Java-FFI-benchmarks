@@ -7,7 +7,7 @@ Setup instructions for benchmark:
 ## Clone the project
 
 ```bash
-git clone 
+git clone
 ```
 
 ## Setup Java 17 panama build using SDK man
@@ -20,11 +20,13 @@ sdk use java 17.ea.3.pma-open
 ## Create Java bindings for `unistd.h`
 
 Linux
+
 ```bash
 jextract --source -d generated/src/main/java -t org.unix -I /usr/include /usr/include/unistd.h
 ```
 
-MacOS 
+MacOS
+
 ```
 export C_INCLUDE=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
 jextract --source -d generated/src/main/java -t org.unix -I $C_INCLUDE $C_INCLUDE/unistd.h
@@ -33,17 +35,20 @@ jextract --source -d generated/src/main/java -t org.unix -I $C_INCLUDE $C_INCLUD
 ## Build and run using Maven
 
 When running the benchmark it currently only works for Linux.
+
 ```bash
-mvn clean verify 
+mvn clean verify
 java -jar target/benchmarks.jar
 ```
 
 ## Typical Results
 
-These results vary because they were ran on a developer machine (macbook pro) with other services running. Also, according 
-to the Java Microbenchmark Harness docs, to avoid `blackholes` (methods that return void). e.g. If you call getPid() and return void
-the JVM will optimize by removing dead code. To ensure the code isn't removed the method returns a primitive (int). 
+These results vary because they were ran on a developer machine with other services running. Also, according
+to the Java Microbenchmark Harness docs, to avoid `blackholes` (methods that return void). e.g. If you call getPid() and return void the JVM will optimize by removing dead code. To ensure the code isn't removed the method returns a primitive (int).
+
 Below smaller numbers the better.
+
+### macOS
 
 ```text
 Benchmark                    Mode  Cnt  Score   Error  Units
@@ -52,11 +57,11 @@ FFIBenchmark.panamaDowncall  avgt   40  8.431 ± 0.096  ns/op
 FFIBenchmark.panamaJExtract  avgt   40  8.488 ± 0.099  ns/op
 ```
 
-40 count
+### Linux
 
-```console
-Benchmark                    Mode  Cnt  Score   Error  Units
-FFIBenchmark.JNI             avgt   40  49.182 ± 1.079  ns/op
-FFIBenchmark.panamaDowncall  avgt   40  50.746 ± 0.702  ns/op
-FFIBenchmark.panamaJExtract  avgt   40  48.838 ± 1.461  ns/op
+```text
+Benchmark                    Mode  Cnt   Score   Error  Units
+FFIBenchmark.JNI             avgt   40  67.187 ± 1.035  ns/op
+FFIBenchmark.panamaDowncall  avgt   40  67.004 ± 0.998  ns/op
+FFIBenchmark.panamaJExtract  avgt   40  68.184 ± 1.919  ns/op
 ```
