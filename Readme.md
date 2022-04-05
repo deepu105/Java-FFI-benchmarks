@@ -1,6 +1,6 @@
 # Java FFI benchmarks
 
-Benchmarks for Java JNI vs Project Panama on Linux (Fedora 35) with JDK (openjdk 17-panama 2021-09-14)
+Benchmarks for Java JNI vs Project Panama with JDK (openjdk 19-panama 2022-09-20)
 
 Setup instructions for benchmark:
 
