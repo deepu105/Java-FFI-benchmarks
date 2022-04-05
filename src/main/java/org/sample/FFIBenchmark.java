@@ -1,6 +1,10 @@
 package org.sample;
 
-import jdk.incubator.foreign.*;
+
+import jdk.incubator.foreign.CLinker;
+import jdk.incubator.foreign.FunctionDescriptor;
+import jdk.incubator.foreign.NativeSymbol;
+import jdk.incubator.foreign.ValueLayout;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -8,8 +12,6 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Fork(warmups = 2, value = 2, jvmArgs = {"-Xms512m", "-Xmx1024m", "--enable-native-access=ALL-UNNAMED", "--add-modules", "jdk.incubator.foreign"})
@@ -21,14 +23,12 @@ import java.util.concurrent.TimeUnit;
 public class FFIBenchmark {
 
     // get System linker
-    private static final CLinker linker = CLinker.getInstance();
-    private static final SymbolLookup lookup = CLinker.systemLookup();
-    private static MemoryAddress nativeSymbol = lookup.lookup("getpid").get();
+    private static final CLinker linker = CLinker.systemCLinker();
+    private static final NativeSymbol nativeSymbol = linker.lookup("getpid").get();
     // predefine symbols and method handle info
     private static final MethodHandle getPidMH = linker.downcallHandle(
             nativeSymbol,
-            MethodType.methodType(int.class),
-            FunctionDescriptor.of(CLinker.C_INT));;
+            FunctionDescriptor.of(ValueLayout.OfInt.JAVA_INT));
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -39,6 +39,7 @@ public class FFIBenchmark {
         new Runner(opt).run();
     }
 
+// uncommnet if running on macOS
 //    @Benchmark
 //    public int JNI() {
 //        return org.bytedeco.javacpp.macosx.getpid();
@@ -56,6 +57,6 @@ public class FFIBenchmark {
 
     @Benchmark
     public int panamaJExtract() {
-       return org.unix.unistd_h.getpid();
+        return org.unix.unistd_h.getpid();
     }
 }

@@ -10,11 +10,11 @@ Setup instructions for benchmark:
 git clone
 ```
 
-## Setup Java 17 panama build using SDK man
+## Setup Java 19 panama EA build using SDK man
 
 ```bash
-sdk install java 17.ea.3.pma-open
-sdk use java 17.ea.3.pma-open
+sdk install java 19.ea.1.pma-open
+sdk use java 19.ea.1.pma-open
 ```
 
 ## Create Java bindings for `unistd.h`
@@ -34,7 +34,7 @@ jextract --source -d generated/src/main/java -t org.unix -I $C_INCLUDE $C_INCLUD
 
 ## Build and run using Maven
 
-When running the benchmark it currently only works for Linux.
+When running the benchmark it currently only works for Linux. For macOS uncomment the appropriate function in `src/main/java/org/sample/FFIBenchmark.java`
 
 ```bash
 mvn clean verify
@@ -48,7 +48,7 @@ to the Java Microbenchmark Harness docs, to avoid `blackholes` (methods that ret
 
 Below smaller numbers the better.
 
-### macOS
+### macOS (JDK 17)
 
 ```text
 Benchmark                    Mode  Cnt  Score   Error  Units
@@ -57,11 +57,11 @@ FFIBenchmark.panamaDowncall  avgt   40  8.431 ± 0.096  ns/op
 FFIBenchmark.panamaJExtract  avgt   40  8.488 ± 0.099  ns/op
 ```
 
-### Linux
+### Linux (JDK 19)
 
 ```text
 Benchmark                    Mode  Cnt   Score   Error  Units
-FFIBenchmark.JNI             avgt   40  67.187 ± 1.035  ns/op
-FFIBenchmark.panamaDowncall  avgt   40  67.004 ± 0.998  ns/op
-FFIBenchmark.panamaJExtract  avgt   40  68.184 ± 1.919  ns/op
+FFIBenchmark.JNI             avgt   40  50.221 ± 0.512  ns/op
+FFIBenchmark.panamaDowncall  avgt   40  49.382 ± 0.701  ns/op
+FFIBenchmark.panamaJExtract  avgt   40  49.946 ± 0.721  ns/op
 ```
