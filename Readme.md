@@ -39,6 +39,7 @@ java -jar target/benchmarks.jar
 ```
 
 ## Typical Results
+
 These results vary because they were ran on a developer machine (macbook pro) with other services running. Also, according 
 to the Java Microbenchmark Harness docs, to avoid `blackholes` (methods that return void). e.g. If you call getPid() and return void
 the JVM will optimize by removing dead code. To ensure the code isn't removed the method returns a primitive (int). 
@@ -49,4 +50,13 @@ Benchmark                    Mode  Cnt  Score   Error  Units
 FFIBenchmark.JNI             avgt   40  9.698 ± 0.532  ns/op
 FFIBenchmark.panamaDowncall  avgt   40  8.431 ± 0.096  ns/op
 FFIBenchmark.panamaJExtract  avgt   40  8.488 ± 0.099  ns/op
+```
+
+40 count
+
+```console
+Benchmark                    Mode  Cnt  Score   Error  Units
+FFIBenchmark.JNI             avgt   40  49.182 ± 1.079  ns/op
+FFIBenchmark.panamaDowncall  avgt   40  50.746 ± 0.702  ns/op
+FFIBenchmark.panamaJExtract  avgt   40  48.838 ± 1.461  ns/op
 ```
