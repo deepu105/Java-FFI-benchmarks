@@ -7,7 +7,7 @@ Setup instructions for benchmark:
 ## Clone the project
 
 ```bash
-git clone
+git clone https://github.com/deepu105/Java-FFI-benchmarks.git
 ```
 
 ## Setup Java 19 panama EA build using SDK man
