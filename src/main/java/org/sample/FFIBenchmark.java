@@ -9,9 +9,10 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@Fork(warmups = 2, value = 2, jvmArgs = {"-Xms2G", "-Xmx2G", "--enable-native-access=ALL-UNNAMED", "--add-modules", "jdk.incubator.foreign"})
+@Fork(warmups = 2, value = 2, jvmArgs = {"-Xms512m", "-Xmx1024m", "--enable-native-access=ALL-UNNAMED", "--add-modules", "jdk.incubator.foreign"})
 @BenchmarkMode(value = Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @Warmup(iterations = 5, time = 500, timeUnit = TimeUnit.MILLISECONDS)
@@ -22,10 +23,10 @@ public class FFIBenchmark {
     // get System linker
     private static final CLinker linker = CLinker.getInstance();
     private static final SymbolLookup lookup = CLinker.systemLookup();
-
+    private static MemoryAddress nativeSymbol = lookup.lookup("getpid").get();
     // predefine symbols and method handle info
     private static final MethodHandle getPidMH = linker.downcallHandle(
-            lookup.lookup("getpid").get(),
+            nativeSymbol,
             MethodType.methodType(int.class),
             FunctionDescriptor.of(CLinker.C_INT));;
 
@@ -39,22 +40,22 @@ public class FFIBenchmark {
     }
 
 //    @Benchmark
-//    public void JNI() {
-//        org.bytedeco.javacpp.macosx.getpid();
+//    public int JNI() {
+//        return org.bytedeco.javacpp.macosx.getpid();
 //    }
 
     @Benchmark
-    public void JNI() {
-        org.bytedeco.javacpp.linux.getpid();
+    public int JNI() {
+        return org.bytedeco.javacpp.linux.getpid();
     }
 
     @Benchmark
-    public void panamaDowncall() throws Throwable {
-        int pid = (int) getPidMH.invokeExact();
+    public int panamaDowncall() throws Throwable {
+        return (int) getPidMH.invokeExact();
     }
 
     @Benchmark
-    public void panamaJExtract() {
-       org.unix.unistd_h.getpid();
+    public int panamaJExtract() {
+       return org.unix.unistd_h.getpid();
     }
 }
