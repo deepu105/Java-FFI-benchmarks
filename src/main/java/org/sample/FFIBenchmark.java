@@ -24,8 +24,8 @@ public class FFIBenchmark {
 
     // get System linker
     private static final CLinker linker = CLinker.systemCLinker();
-    private static final NativeSymbol nativeSymbol = linker.lookup("getpid").get();
     // predefine symbols and method handle info
+    private static final NativeSymbol nativeSymbol = linker.lookup("getpid").get();
     private static final MethodHandle getPidMH = linker.downcallHandle(
             nativeSymbol,
             FunctionDescriptor.of(ValueLayout.OfInt.JAVA_INT));
@@ -39,11 +39,11 @@ public class FFIBenchmark {
         new Runner(opt).run();
     }
 
-// uncommnet if running on macOS
-//    @Benchmark
-//    public int JNI() {
-//        return org.bytedeco.javacpp.macosx.getpid();
-//    }
+// uncomment this when running on macOS
+// @Benchmark
+// public int JNI() {
+//     return org.bytedeco.javacpp.macosx.getpid();
+// }
 
     @Benchmark
     public int JNI() {

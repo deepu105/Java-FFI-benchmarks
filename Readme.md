@@ -1,6 +1,6 @@
 # Java FFI benchmarks
 
-Benchmarks for Java JNI vs Project Panama with JDK (openjdk 19-panama 2022-09-20)
+Benchmarks for Java JNI (using JavaCPP) vs Project Panama with JDK (openjdk 19-panama 2022-09-20)
 
 Setup instructions for benchmark:
 
@@ -17,24 +17,25 @@ sdk install java 19.ea.1.pma-open
 sdk use java 19.ea.1.pma-open
 ```
 
-## Create Java bindings for `unistd.h`
+## Create Java bindings for `unistd.h` using jextract
 
-Linux
+**Linux**
 
 ```bash
-jextract --source -d generated/src/main/java -t org.unix -I /usr/include /usr/include/unistd.h
+export C_INCLUDE=/usr/include
+jextract --source -d generated/src/main/java -t org.unix -I $C_INCLUDE $C_INCLUDE/unistd.h
 ```
 
-MacOS
+**macOS**
 
-```
+```bash
 export C_INCLUDE=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
 jextract --source -d generated/src/main/java -t org.unix -I $C_INCLUDE $C_INCLUDE/unistd.h
 ```
 
 ## Build and run using Maven
 
-When running the benchmark it currently only works for Linux. For macOS uncomment the appropriate function in `src/main/java/org/sample/FFIBenchmark.java`
+When running the benchmark it by default only works for Linux. For macOS uncomment the appropriate function in `src/main/java/org/sample/FFIBenchmark.java`
 
 ```bash
 mvn clean verify
@@ -44,9 +45,9 @@ java -jar target/benchmarks.jar
 ## Typical Results
 
 These results vary because they were ran on a developer machine with other services running. Also, according
-to the Java Microbenchmark Harness docs, to avoid `blackholes` (methods that return void). e.g. If you call getPid() and return void the JVM will optimize by removing dead code. To ensure the code isn't removed the method returns a primitive (int).
+to the JMH docs, to avoid `blackholes` (methods that return void). e.g. If you call `getPid()` and return void the JVM will optimize by removing dead code. To ensure the code isn't removed the method returns a primitive (int).
 
-Below smaller numbers the better.
+Below are some results (smaller numbers are better).
 
 ### macOS (JDK 17)
 
